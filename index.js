@@ -1,7 +1,7 @@
 import OpenAI from 'openai';
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-exports.chat = async (req, res) => {
+export async chat(req, res) => {
   const assistantId = process.env.ASSISTANT_ID;
   const { threadId, message } = req.body;
 
