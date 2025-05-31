@@ -19,7 +19,7 @@ exports.chat = async (req, res) => {
       assistant_id: assistantId,
     });
 
-    let runStatus;s
+    let runStatus;
     do {
       await new Promise(r => setTimeout(r, 1000));
       runStatus = await openai.beta.threads.runs.retrieve(thread.id, run.id);
