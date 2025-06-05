@@ -1,10 +1,38 @@
-import OpenAI from 'openai';
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+import express from 'express';
+import { OpenAI } from 'openai';
+import dotenv from 'dotenv';
 
-export async function chat(req, res) {
-  const assistantId = process.env.ASSISTANT_ID;
+dotenv.config(); // Load .env variables if running locally
+
+const app = express();
+app.use(express.json());
+
+app.use((req, res, next) => {
+  console.log(`➡️ ${req.method} ${req.url}`);
+  next();
+});
+
+console.log('logging Express app');
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+const assistantId = process.env.ASSISTANT_ID;
+
+// Health check
+app.get('/', (req, res) => {
+  res.send('✅ OpenAI Assistant API is running.');
+});
+
+app.get('/ping', (req, res) => {
+  res.send('pong');
+});
+
+// Chat endpoint
+app.post('/chat', async (req, res) => {
   const { threadId, message } = req.body;
-
+  console.log('in POST');
   try {
     const thread = threadId
       ? await openai.beta.threads.retrieve(threadId)
@@ -32,8 +60,16 @@ export async function chat(req, res) {
       threadId: thread.id,
       reply: reply?.content[0]?.text?.value || 'No reply.',
     });
+
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Assistant error', details: err.message });
+    console.error('❌ Error:', err);
+    res.status(500).json({ error: 'Assistant Error', details: err.message });
   }
-};
+});
+
+// ✅ Export the app for Google Cloud Run to use
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+  console.log(`🚀 Assistant server running on http://localhost:${PORT}`);
+});
+
