@@ -1,11 +1,13 @@
 import express from 'express';
 import { OpenAI } from 'openai';
 import dotenv from 'dotenv';
+import cors from 'cors';
 
 dotenv.config(); // Load .env variables if running locally
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 app.use((req, res, next) => {
   console.log(`➡️ ${req.method} ${req.url}`);
@@ -30,43 +32,6 @@ app.get('/ping', (req, res) => {
 });
 
 // Chat endpoint
-/*app.post('/chat', async (req, res) => {
-  const { threadId, message } = req.body;
-  console.log('in POST');
-  try {
-    const thread = threadId
-      ? await openai.beta.threads.retrieve(threadId)
-      : await openai.beta.threads.create();
-
-    await openai.beta.threads.messages.create(thread.id, {
-      role: 'user',
-      content: message,
-    });
-
-    const run = await openai.beta.threads.runs.create(thread.id, {
-      assistant_id: assistantId,
-    });
-
-    let runStatus;
-    do {
-      await new Promise(r => setTimeout(r, 1000));
-      runStatus = await openai.beta.threads.runs.retrieve(thread.id, run.id);
-    } while (runStatus.status !== 'completed');
-
-    const messages = await openai.beta.threads.messages.list(thread.id);
-    const reply = messages.data.find(m => m.role === 'assistant');
-
-    res.json({
-      threadId: thread.id,
-      reply: reply?.content[0]?.text?.value || 'No reply.',
-    });
-
-  } catch (err) {
-    console.error('❌ Error:', err);
-    res.status(500).json({ error: 'Assistant Error', details: err.message });
-  }
-});*/
-
 app.post('/chat', async (req, res) => {
   const { threadId, message } = req.body;
   console.log('in POST');
