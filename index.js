@@ -1,13 +1,11 @@
 import express from 'express';
 import { OpenAI } from 'openai';
 import dotenv from 'dotenv';
-import cors from 'cors';
 
 dotenv.config(); // Load .env variables if running locally
 
 const app = express();
 app.use(express.json());
-app.use(cors());
 
 app.use((req, res, next) => {
   console.log(`➡️ ${req.method} ${req.url}`);
