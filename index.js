@@ -14,8 +14,6 @@ app.use((req, res, next) => {
   next();
 });
 
-console.log('logging Express app');
-
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -34,7 +32,6 @@ app.get('/ping', (req, res) => {
 // Chat endpoint
 app.post('/chat', async (req, res) => {
   const { threadId, message } = req.body;
-  console.log('in POST');
 
   try {
     // 1. Create or retrieve the conversation thread
